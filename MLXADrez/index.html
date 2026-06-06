@@ -4,77 +4,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLXADrez</title>
+    <title>MLXADrez - Univesp</title>
     <style>
+        :root {
+            --bg-primary: #0f1115;
+            --bg-secondary: #5a5e64;
+            --bg-tertiary: #000000;
+            --accent: #da2b2b;
+            --accent-hover: #ff0000;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-primary: #f3f4f6;
+            --text-secondary: #ffffff;
+            --board-light: #ebecd0;
+            --board-dark: #779556;
+            --highlight: rgba(255, 255, 0, 0.5);
+            --valid-move: rgba(0, 0, 0, 0.2);
+            --valid-capture: rgba(239, 68, 68, 0.6);
+            --check-glow: rgba(239, 68, 68, 0.8);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background-color: #1a1a1a;
-            color: #fff;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .screen {
             display: none;
-            max-width: 800px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 700px;
+            animation: fadeIn 0.3s ease;
         }
 
         .screen.active {
             display: block;
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .card {
-            background: #2a2a2a;
-            padding: 20px;
-            margin: 10px 0;
-            border: 1px solid #444;
+            background: var(--bg-secondary);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--bg-tertiary);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            max-width: 180px;
+            height: auto;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-weight: 700;
         }
 
         input,
         button,
         select {
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #555;
-            background: #333;
-            color: #fff;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border: 1px solid var(--bg-tertiary);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
             width: 100%;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
 
         button {
-            background: #d32f2f;
+            background: var(--accent);
             border: none;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         button:hover {
-            background: #b71c1c;
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        button.secondary:hover {
+            background: #2d3340;
+            color: var(--text-primary);
+        }
+
+        button.success {
+            background: var(--success);
+        }
+
+        button.success:hover {
+            background: #059669;
+        }
+
+        button.danger {
+            background: var(--danger);
+        }
+
+        button.danger:hover {
+            background: #dc2626;
         }
 
         .tabs {
             display: flex;
-            gap: 5px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--bg-tertiary);
+            padding: 4px;
+            border-radius: 10px;
         }
 
         .tab {
             flex: 1;
             padding: 10px;
-            background: #333;
-            border: 1px solid #555;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
             cursor: pointer;
             text-align: center;
+            border-radius: 8px;
+            margin: 0;
         }
 
         .tab.active {
-            background: #d32f2f;
+            background: var(--accent);
+            color: white;
         }
 
         .tab-content {
@@ -83,43 +188,71 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.2s ease;
         }
 
         .user-list {
             max-height: 400px;
             overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .user-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .user-list::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 3px;
         }
 
         .user-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            background: #333;
-            margin: 5px 0;
-            border: 1px solid #444;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            margin: 8px 0;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .user-item:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
         }
 
         .user-info {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
         }
 
         .avatar {
-            width: 40px;
-            height: 40px;
-            background: #d32f2f;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent), #818cf8);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             font-size: 1.2rem;
+            border-radius: 10px;
+            color: white;
         }
 
         .stats {
             font-size: 0.85rem;
-            color: #aaa;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .board-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
         }
 
         .board {
@@ -127,98 +260,190 @@
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
             width: 100%;
-            max-width: 600px;
             aspect-ratio: 1;
-            margin: 20px auto;
-            border: 4px solid #444;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 4px solid var(--bg-tertiary);
         }
 
         .square {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
             cursor: pointer;
-            border: 1px solid #333;
+            position: relative;
         }
 
         .square.light {
-            background: #d4c4a8;
+            background: var(--board-light);
         }
 
         .square.dark {
-            background: #6b5d4f;
+            background: var(--board-dark);
         }
 
         .square.selected {
-            background: #ffeb3b !important;
+            background: var(--highlight) !important;
         }
 
-        .square.valid-move {
-            position: relative;
+        .square.last-move {
+            background: rgba(155, 199, 0, 0.4) !important;
+        }
+
+        .square.in-check {
+            background: radial-gradient(circle, var(--check-glow) 0%, rgba(239, 68, 68, 0) 70%) !important;
+            animation: pulse-check 1.2s infinite;
+        }
+
+        @keyframes pulse-check {
+
+            0%,
+            100% {
+                box-shadow: inset 0 0 10px var(--check-glow);
+            }
+
+            50% {
+                box-shadow: inset 0 0 25px var(--check-glow);
+            }
         }
 
         .square.valid-move::after {
             content: '';
-            width: 20%;
-            height: 20%;
-            background: rgba(0, 0, 0, 0.3);
+            position: absolute;
+            width: 28%;
+            height: 28%;
+            background: var(--valid-move);
             border-radius: 50%;
+            z-index: 1;
         }
 
         .square.valid-capture::after {
             content: '';
-            width: 80%;
-            height: 80%;
-            border: 3px solid rgba(255, 0, 0, 0.5);
+            position: absolute;
+            width: 85%;
+            height: 85%;
+            border: 5px solid var(--valid-capture);
             border-radius: 50%;
+            background: transparent;
+            z-index: 1;
+        }
+
+        .piece {
+            font-family: 'Segoe UI Symbol', 'Noto Sans Symbols', 'Arial Unicode MS', sans-serif;
+            font-size: clamp(2.5rem, 9vw, 4rem);
+            line-height: 1;
+            z-index: 2;
+            transition: transform 0.15s ease;
+            paint-order: stroke fill;
         }
 
         .piece.white {
-            color: #fff;
-            text-shadow: 0 0 2px #000;
+            color: #ffffff;
+            -webkit-text-stroke: 1.5px #000000;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
         }
 
         .piece.black {
-            color: #000;
+            color: #111111;
+            -webkit-text-stroke: 1.5px #ffffff;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .square:hover .piece {
+            transform: scale(1.1);
         }
 
         .status {
             text-align: center;
-            padding: 15px;
-            background: #333;
-            margin: 10px 0;
-            font-weight: bold;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 15px 0;
+            border: 1px solid var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .status.thinking {
+            color: var(--warning);
+        }
+
+        .status.your-turn {
+            color: var(--success);
+        }
+
+        .status.check {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+            animation: pulse-text 1s infinite;
+        }
+
+        @keyframes pulse-text {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
         }
 
         .room-code {
-            font-size: 2rem;
+            font-size: 2.5rem;
             text-align: center;
             padding: 20px;
-            background: #444;
-            margin: 10px 0;
-            font-family: monospace;
-            letter-spacing: 5px;
+            background: var(--bg-tertiary);
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 8px;
+            border-radius: 10px;
+            color: var(--accent);
+            font-weight: bold;
+            user-select: all;
         }
 
         .btn-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            margin-top: 20px;
         }
 
         .btn-group button {
             flex: 1;
+            margin: 0;
         }
 
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 15px 25px;
-            background: #d32f2f;
-            color: #fff;
-            border: 1px solid #b71c1c;
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             z-index: 10000;
+            animation: slideIn 0.3s ease;
+            font-weight: 600;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
         }
 
         .modal {
@@ -227,7 +452,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -236,80 +462,81 @@
 
         .modal.active {
             display: flex;
+            animation: fadeIn 0.2s ease;
         }
 
         .modal-content {
-            background: #2a2a2a;
+            background: var(--bg-secondary);
             padding: 40px;
-            border: 2px solid #444;
+            border-radius: 20px;
+            border: 1px solid var(--bg-tertiary);
             text-align: center;
             max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
-        .ranking-item {
+        .ranking-item,
+        .match-item {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 10px;
-            background: #333;
-            margin: 5px 0;
+            justify-content: space-between;
+            padding: 14px;
+            background: var(--bg-tertiary);
+            margin: 8px 0;
+            border-radius: 10px;
         }
 
         .rank-pos {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.2rem;
+            font-weight: 800;
             min-width: 40px;
-        }
-
-        .match-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            background: #333;
-            margin: 5px 0;
+            color: var(--accent);
         }
 
         .result {
-            padding: 3px 10px;
-            font-weight: bold;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
             font-size: 0.85rem;
         }
 
         .result.win {
-            background: #4caf50;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
         }
 
         .result.loss {
-            background: #f44336;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .result.draw {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
         }
 
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 8px;
-            background: #555;
-            border-radius: 4px;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
             outline: none;
-            margin: 15px 0;
+            margin: 20px 0;
+            border: none;
+            padding: 0;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            background: #d32f2f;
+            width: 22px;
+            height: 22px;
+            background: var(--accent);
             border-radius: 50%;
             cursor: pointer;
-            border: 2px solid #fff;
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            background: #d32f2f;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid #fff;
+            border: 3px solid var(--bg-secondary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -318,22 +545,24 @@
 
     <div class="screen active" id="authScreen">
         <div class="card">
-            <img src="univesp.png" style="width: 150px; height: 100px; margin: 0 auto; display: block;">
-            <h1 style="text-align: center; margin-bottom: 20px;">MLXADrez</h1>
+            <div class="logo-container">
+                <img src="univesp.png" alt="Univesp" onerror="this.style.display='none'">
+                <h1 style="margin-top: 10px;">MLXADrez</h1>
+            </div>
             <div class="tabs">
                 <button class="tab active" data-tab="login">Login</button>
                 <button class="tab" data-tab="register">Cadastro</button>
             </div>
             <div class="tab-content active" id="loginTab">
-                <input type="text" id="loginUsername" placeholder="Usuário">
+                <input type="text" id="loginUsername" placeholder="Nome de usuário">
                 <input type="password" id="loginPassword" placeholder="Senha">
                 <button onclick="login()">Entrar</button>
             </div>
             <div class="tab-content" id="registerTab">
-                <input type="text" id="registerUsername" placeholder="Usuário">
+                <input type="text" id="registerUsername" placeholder="Nome de usuário">
                 <input type="password" id="registerPassword" placeholder="Senha">
-                <input type="password" id="registerConfirmPassword" placeholder="Confirmar Senha">
-                <button onclick="register()">Criar Conta</button>
+                <input type="password" id="registerConfirmPassword" placeholder="Confirmar senha">
+                <button class="success" onclick="register()">Criar Conta</button>
             </div>
         </div>
     </div>
@@ -341,14 +570,15 @@
     <div class="screen" id="lobbyScreen">
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="display: flex; gap: 12px; align-items: center;">
                     <div class="avatar" id="userAvatar">?</div>
                     <div>
-                        <div id="profileUsername" style="font-weight: bold;"></div>
+                        <div id="profileUsername" style="font-weight: 700; font-size: 1.1rem;"></div>
                         <div class="stats" id="profileStats"></div>
                     </div>
                 </div>
-                <button onclick="logout()" style="width: auto; padding: 8px 15px;">Sair</button>
+                <button class="danger" onclick="logout()"
+                    style="width: auto; padding: 8px 16px; margin: 0;">Sair</button>
             </div>
         </div>
         <div class="card">
@@ -358,18 +588,18 @@
                 <button class="tab" data-tab="history">Histórico</button>
             </div>
             <div class="tab-content active" id="roomsTab">
-                <h2 style="margin-bottom: 15px;">Salas Disponíveis</h2>
+                <h2>Salas Disponíveis</h2>
                 <div class="user-list" id="roomsList"></div>
                 <button onclick="createRoom()" style="margin-top: 15px;">Criar Nova Sala</button>
-                <button onclick="showScreen('aiSetupScreen')" style="margin-top: 10px; background: #4caf50;">Jogar
-                    contra IA</button>
+                <button class="success" onclick="showScreen('aiSetupScreen')" style="margin-top: 10px;">Jogar contra IA
+                    Adaptativa</button>
             </div>
             <div class="tab-content" id="rankingTab">
-                <h2 style="margin-bottom: 15px;">Ranking</h2>
+                <h2>Ranking Global</h2>
                 <div id="rankingList"></div>
             </div>
             <div class="tab-content" id="historyTab">
-                <h2 style="margin-bottom: 15px;">Suas Partidas</h2>
+                <h2>Suas Partidas</h2>
                 <div id="matchHistory"></div>
             </div>
         </div>
@@ -377,128 +607,111 @@
 
     <div class="screen" id="aiSetupScreen">
         <div class="card">
-            <h2 style="text-align: center; margin-bottom: 20px;">Jogar contra IA</h2>
+            <h2>Configurar IA Adaptativa</h2>
             <div style="margin: 20px 0; text-align: center;">
-                <label style="display: block; margin-bottom: 10px; font-size: 1.1rem;">Nível de Dificuldade: <span
-                        id="difficultyLabel"
-                        style="color: #d32f2f; font-weight: bold; font-size: 1.3rem;">5</span></label>
+                <label style="display: block; margin-bottom: 10px; font-size: 1rem; color: var(--text-secondary);">
+                    Nível de Processamento: <span id="difficultyLabel"
+                        style="color: var(--accent); font-weight: 800; font-size: 1.4rem;">5</span>
+                </label>
                 <input type="range" id="aiDifficultySlider" min="1" max="10" value="5"
                     oninput="document.getElementById('difficultyLabel').textContent = this.value">
                 <div
-                    style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-top: 5px;">
-                    <span>Fácil</span>
-                    <span>Médio</span>
-                    <span>Difícil</span>
-                    <span>Extremo</span>
+                    style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">
+                    <span>Iniciante</span>
+                    <span>Intermediário</span>
+                    <span>Avançado</span>
+                    <span>Grandmaster</span>
                 </div>
+                <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+                    <span style="color: var(--warning);">★</span> A IA possui memória de aprendizado. Ela ajusta seus
+                    pesos de avaliação (segurança do rei, controle do centro) baseada nas suas vitórias anteriores
+                    contra ela.
+                </p>
             </div>
-            <button onclick="startAiGame()">Iniciar Partida</button>
-            <button onclick="showScreen('lobbyScreen')" style="background: #555; margin-top: 10px;">Voltar</button>
+            <button class="success" onclick="startAiGame()">Iniciar Partida</button>
+            <button class="secondary" onclick="showScreen('lobbyScreen')" style="margin-top: 10px;">Voltar</button>
         </div>
     </div>
 
     <div class="screen" id="waitingScreen">
-        <div class="card">
-            <h2 style="text-align: center; margin-bottom: 20px;">Aguardando Jogador</h2>
+        <div class="card" style="text-align: center;">
+            <h2>Aguardando Oponente</h2>
             <div class="room-code" id="roomCodeDisplay"></div>
-            <p style="text-align: center; color: #aaa; margin-bottom: 20px;">Compartilhe este código com seu oponente
-            </p>
-            <button onclick="cancelRoom()">Cancelar</button>
-        </div>
-    </div>
-
-    <div class="screen" id="joinScreen">
-        <div class="card">
-            <h2 style="text-align: center; margin-bottom: 20px;">Entrar em Sala</h2>
-            <input type="text" id="roomCodeInput" placeholder="Código da Sala"
-                style="text-align: center; font-size: 1.5rem; letter-spacing: 3px;">
-            <button onclick="joinRoom()">Entrar</button>
-            <button onclick="showScreen('lobbyScreen')" style="background: #555;">Voltar</button>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Compartilhe este código com seu amigo</p>
+            <button class="danger" onclick="cancelRoom()">Cancelar Sala</button>
         </div>
     </div>
 
     <div class="screen" id="gameScreen">
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="display: flex; gap: 12px; align-items: center;">
                     <div class="avatar" id="gamePlayer1">?</div>
-                    <div id="gamePlayer1Name"></div>
+                    <div id="gamePlayer1Name" style="font-weight: 700;"></div>
                 </div>
-                <div style="font-size: 1.5rem; font-weight: bold;">VS</div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <div id="gamePlayer2Name"></div>
+                <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-secondary);">VS</div>
+                <div style="display: flex; gap: 12px; align-items: center; flex-direction: row-reverse;">
                     <div class="avatar" id="gamePlayer2">?</div>
+                    <div id="gamePlayer2Name" style="font-weight: 700; text-align: right;"></div>
                 </div>
             </div>
         </div>
         <div class="status" id="gameStatus">Vez das Brancas</div>
-        <div class="board" id="board"></div>
+        <div class="board-container">
+            <div class="board" id="board"></div>
+        </div>
         <div class="btn-group">
-            <button onclick="resignGame()">Desistir</button>
-            <button onclick="backToLobby()" style="background: #555;">Voltar</button>
+            <button class="danger" onclick="resignGame()">Desistir</button>
+            <button class="secondary" onclick="backToLobby()">Voltar ao Lobby</button>
         </div>
     </div>
 
     <div class="modal" id="resultModal">
         <div class="modal-content">
-            <h1 id="resultTitle" style="margin-bottom: 20px;"></h1>
-            <p id="resultText" style="margin-bottom: 30px; color: #aaa;"></p>
+            <h1 id="resultTitle" style="font-size: 2rem; margin-bottom: 15px;"></h1>
+            <p id="resultText" style="margin-bottom: 30px; color: var(--text-secondary); font-size: 1.1rem;"></p>
             <button onclick="backToLobby()">Voltar ao Lobby</button>
         </div>
     </div>
 
     <script>
         const db = {
-            name: 'ChessDB',
-            version: 1,
-            instance: null,
+            name: 'MLXADrezDB', version: 1, instance: null,
             async init() {
                 return new Promise((resolve, reject) => {
                     const req = indexedDB.open(this.name, this.version);
                     req.onerror = () => reject(req.error);
-                    req.onsuccess = () => {
-                        this.instance = req.result;
-                        resolve();
-                    };
+                    req.onsuccess = () => { this.instance = req.result; resolve(); };
                     req.onupgradeneeded = (e) => {
                         const database = e.target.result;
-                        if (!database.objectStoreNames.contains('users')) {
-                            database.createObjectStore('users', { keyPath: 'username' });
-                        }
+                        if (!database.objectStoreNames.contains('users')) database.createObjectStore('users', { keyPath: 'username' });
                         if (!database.objectStoreNames.contains('matches')) {
                             const store = database.createObjectStore('matches', { keyPath: 'id', autoIncrement: true });
-                            store.createIndex('player1', 'player1');
-                            store.createIndex('player2', 'player2');
+                            store.createIndex('player1', 'player1'); store.createIndex('player2', 'player2');
                         }
                     };
                 });
             },
             async addUser(username, password) {
                 const tx = this.instance.transaction(['users'], 'readwrite');
-                const store = tx.objectStore('users');
                 const user = { username, password, wins: 0, losses: 0, draws: 0, createdAt: new Date().toISOString() };
                 return new Promise((resolve, reject) => {
-                    const req = store.add(user);
-                    req.onsuccess = () => resolve(user);
-                    req.onerror = () => reject(req.error);
+                    const req = tx.objectStore('users').add(user);
+                    req.onsuccess = () => resolve(user); req.onerror = () => reject(req.error);
                 });
             },
             async getUser(username) {
                 const tx = this.instance.transaction(['users'], 'readonly');
-                const store = tx.objectStore('users');
                 return new Promise((resolve, reject) => {
-                    const req = store.get(username);
-                    req.onsuccess = () => resolve(req.result);
-                    req.onerror = () => reject(req.error);
+                    const req = tx.objectStore('users').get(username);
+                    req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error);
                 });
             },
             async getAllUsers() {
                 const tx = this.instance.transaction(['users'], 'readonly');
-                const store = tx.objectStore('users');
                 return new Promise((resolve, reject) => {
-                    const req = store.getAll();
-                    req.onsuccess = () => resolve(req.result);
-                    req.onerror = () => reject(req.error);
+                    const req = tx.objectStore('users').getAll();
+                    req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error);
                 });
             },
             async updateUserStats(username, result) {
@@ -508,54 +721,48 @@
                 else if (result === 'loss') user.losses++;
                 else if (result === 'draw') user.draws++;
                 const tx = this.instance.transaction(['users'], 'readwrite');
-                const store = tx.objectStore('users');
                 return new Promise((resolve, reject) => {
-                    const req = store.put(user);
-                    req.onsuccess = () => resolve(user);
-                    req.onerror = () => reject(req.error);
+                    const req = tx.objectStore('users').put(user);
+                    req.onsuccess = () => resolve(user); req.onerror = () => reject(req.error);
                 });
             },
             async addMatch(player1, player2, winner, moves) {
                 const tx = this.instance.transaction(['matches'], 'readwrite');
-                const store = tx.objectStore('matches');
                 const match = { player1, player2, winner, moves, date: new Date().toISOString() };
                 return new Promise((resolve, reject) => {
-                    const req = store.add(match);
-                    req.onsuccess = () => resolve(match);
-                    req.onerror = () => reject(req.error);
+                    const req = tx.objectStore('matches').add(match);
+                    req.onsuccess = () => resolve(match); req.onerror = () => reject(req.error);
                 });
             },
             async getMatchesByUsername(username) {
                 const tx = this.instance.transaction(['matches'], 'readonly');
-                const store = tx.objectStore('matches');
                 return new Promise((resolve, reject) => {
-                    const req = store.getAll();
-                    req.onsuccess = () => {
-                        const matches = req.result.filter(m => m.player1 === username || m.player2 === username);
-                        resolve(matches);
-                    };
+                    const req = tx.objectStore('matches').getAll();
+                    req.onsuccess = () => resolve(req.result.filter(m => m.player1 === username || m.player2 === username));
                     req.onerror = () => reject(req.error);
                 });
             }
         };
 
-        let currentUser = null;
-        let currentRoom = null;
-        let channel = null;
-        let board = [];
-        let currentPlayer = 'w';
-        let selectedSquare = null;
-        let validMoves = [];
-        let lastMove = null;
-        let gameActive = false;
-        let moveHistory = [];
-        let playerColor = 'w';
-        let isAiGame = false;
+        let currentUser = null, currentRoom = null, channel = null, board = [];
+        let currentPlayer = 'w', selectedSquare = null, validMoves = [], lastMove = null;
+        let gameActive = false, moveHistory = [], playerColor = 'w', isAiGame = false;
 
         const PIECES = {
             w: { k: '♔', q: '♕', r: '♖', b: '♗', n: '♘', p: '♙' },
             b: { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' }
         };
+
+        const PST = {
+            p: [[0, 0, 0, 0, 0, 0, 0, 0], [50, 50, 50, 50, 50, 50, 50, 50], [10, 10, 20, 30, 30, 20, 10, 10], [5, 5, 10, 25, 25, 10, 5, 5], [0, 0, 0, 20, 20, 0, 0, 0], [5, -5, -10, 0, 0, -10, -5, 5], [5, 10, 10, -20, -20, 10, 10, 5], [0, 0, 0, 0, 0, 0, 0, 0]],
+            n: [[-50, -40, -30, -30, -30, -30, -40, -50], [-40, -20, 0, 0, 0, 0, -20, -40], [-30, 0, 10, 15, 15, 10, 0, -30], [-30, 5, 15, 20, 20, 15, 5, -30], [-30, 0, 15, 20, 20, 15, 0, -30], [-30, 5, 10, 15, 15, 10, 5, -30], [-40, -20, 0, 5, 5, 0, -20, -40], [-50, -40, -30, -30, -30, -30, -40, -50]],
+            b: [[-20, -10, -10, -10, -10, -10, -10, -20], [-10, 0, 0, 0, 0, 0, 0, -10], [-10, 0, 5, 10, 10, 5, 0, -10], [-10, 5, 5, 10, 10, 5, 5, -10], [-10, 0, 10, 10, 10, 10, 0, -10], [-10, 10, 10, 10, 10, 10, 10, -10], [-10, 5, 0, 0, 0, 0, 5, -10], [-20, -10, -10, -10, -10, -10, -10, -20]],
+            r: [[0, 0, 0, 0, 0, 0, 0, 0], [5, 10, 10, 10, 10, 10, 10, 5], [-5, 0, 0, 0, 0, 0, 0, -5], [-5, 0, 0, 0, 0, 0, 0, -5], [-5, 0, 0, 0, 0, 0, 0, -5], [-5, 0, 0, 0, 0, 0, 0, -5], [-5, 0, 0, 0, 0, 0, 0, -5], [0, 0, 0, 5, 5, 0, 0, 0]],
+            q: [[-20, -10, -10, -5, -5, -10, -10, -20], [-10, 0, 0, 0, 0, 0, 0, -10], [-10, 0, 5, 5, 5, 5, 0, -10], [-5, 0, 5, 5, 5, 5, 0, -5], [0, 0, 5, 5, 5, 5, 0, -5], [-10, 5, 5, 5, 5, 5, 0, -10], [-10, 0, 5, 0, 0, 0, 0, -10], [-20, -10, -10, -5, -5, -10, -10, -20]],
+            k: [[-30, -40, -40, -50, -50, -40, -40, -30], [-30, -40, -40, -50, -50, -40, -40, -30], [-30, -40, -40, -50, -50, -40, -40, -30], [-30, -40, -40, -50, -50, -40, -40, -30], [-20, -30, -30, -40, -40, -30, -30, -20], [-10, -20, -20, -20, -20, -20, -20, -10], [20, 20, 0, 0, 0, 0, 20, 20], [20, 30, 10, 0, 0, 10, 30, 20]]
+        };
+
+        let aiMeta = JSON.parse(localStorage.getItem('aiMeta') || '{"kingSafety": 1.0, "centerControl": 1.0}');
 
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
@@ -563,68 +770,46 @@
                 const screen = tabGroup.closest('.screen') || tabGroup.closest('.card');
                 tabGroup.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                const tabName = tab.dataset.tab;
                 screen.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                screen.querySelector(`#${tabName}Tab`).classList.add('active');
+                screen.querySelector(`#${tab.dataset.tab}Tab`).classList.add('active');
             });
         });
 
         async function initApp() {
             await db.init();
             const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                showScreen('lobbyScreen');
-                await loadLobby();
-            }
+            if (savedUser) { currentUser = JSON.parse(savedUser); showScreen('lobbyScreen'); await loadLobby(); }
         }
 
         async function login() {
-            const username = document.getElementById('loginUsername').value;
+            const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
             try {
                 const user = await db.getUser(username);
-                if (!user) {
-                    showNotification('Usuário não encontrado');
-                    return;
-                }
-                if (user.password !== password) {
-                    showNotification('Senha incorreta');
-                    return;
-                }
+                if (!user || user.password !== password) { showNotification(user ? 'Senha incorreta' : 'Usuário não encontrado'); return; }
                 currentUser = user;
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                showNotification('Login realizado');
+                showNotification('Login realizado com sucesso');
                 showScreen('lobbyScreen');
                 await loadLobby();
-            } catch (error) {
-                showNotification('Erro ao fazer login');
-            }
+            } catch (error) { showNotification('Erro ao fazer login'); }
         }
 
         async function register() {
-            const username = document.getElementById('registerUsername').value;
+            const username = document.getElementById('registerUsername').value.trim();
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            if (password !== confirmPassword) {
-                showNotification('Senhas não coincidem');
-                return;
-            }
+            if (password !== confirmPassword) { showNotification('As senhas não coincidem'); return; }
+            if (username.length < 3) { showNotification('Nome de usuário muito curto'); return; }
             try {
-                const existingUser = await db.getUser(username);
-                if (existingUser) {
-                    showNotification('Usuário já existe');
-                    return;
-                }
+                if (await db.getUser(username)) { showNotification('Usuário já existe'); return; }
                 const newUser = await db.addUser(username, password);
                 currentUser = newUser;
                 localStorage.setItem('currentUser', JSON.stringify(newUser));
-                showNotification('Conta criada');
+                showNotification('Conta criada com sucesso');
                 showScreen('lobbyScreen');
                 await loadLobby();
-            } catch (error) {
-                showNotification('Erro ao criar conta');
-            }
+            } catch (error) { showNotification('Erro ao criar conta'); }
         }
 
         function logout() {
@@ -639,9 +824,7 @@
             document.getElementById('userAvatar').textContent = user.username[0].toUpperCase();
             document.getElementById('profileUsername').textContent = user.username;
             document.getElementById('profileStats').textContent = `${user.wins}V - ${user.losses}D - ${user.draws}E`;
-            await loadRooms();
-            await loadRanking();
-            await loadMatchHistory();
+            await loadRooms(); await loadRanking(); await loadMatchHistory();
         }
 
         async function loadRooms() {
@@ -656,11 +839,11 @@
                     <div class="user-info">
                         <div class="avatar">${room.host[0].toUpperCase()}</div>
                         <div>
-                            <div style="font-weight: bold;">Sala de ${room.host}</div>
+                            <div style="font-weight: 700;">Sala de ${room.host}</div>
                             <div class="stats">Código: ${room.code}</div>
                         </div>
                     </div>
-                    <button onclick="joinRoomByCode('${room.code}')" style="width: auto; padding: 8px 15px;">Entrar</button>
+                    <button onclick="joinRoomByCode('${room.code}')" style="width: auto; padding: 8px 16px; margin: 0;">Entrar</button>
                 `;
                 roomsList.appendChild(roomItem);
             });
@@ -670,22 +853,17 @@
             const users = await db.getAllUsers();
             const rankingList = document.getElementById('rankingList');
             rankingList.innerHTML = '';
-            const sortedUsers = users.sort((a, b) => {
-                const scoreA = a.wins * 3 + a.draws;
-                const scoreB = b.wins * 3 + b.draws;
-                return scoreB - scoreA;
-            });
-            sortedUsers.forEach((user, index) => {
+            users.sort((a, b) => (b.wins * 3 + b.draws) - (a.wins * 3 + a.draws)).forEach((user, index) => {
                 const rankingItem = document.createElement('div');
                 rankingItem.className = 'ranking-item';
                 rankingItem.innerHTML = `
                     <div class="rank-pos">#${index + 1}</div>
-                    <div class="avatar">${user.username[0].toUpperCase()}</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold;">${user.username}</div>
+                    <div class="avatar" style="width: 36px; height: 36px; font-size: 1rem;">${user.username[0].toUpperCase()}</div>
+                    <div style="flex: 1; margin-left: 10px;">
+                        <div style="font-weight: 700;">${user.username}</div>
                         <div class="stats">${user.wins}V - ${user.losses}D - ${user.draws}E</div>
                     </div>
-                    <div style="font-weight: bold;">${user.wins * 3 + user.draws} pts</div>
+                    <div style="font-weight: 800; color: var(--accent);">${user.wins * 3 + user.draws} pts</div>
                 `;
                 rankingList.appendChild(rankingItem);
             });
@@ -696,7 +874,7 @@
             const matchHistory = document.getElementById('matchHistory');
             matchHistory.innerHTML = '';
             if (matches.length === 0) {
-                matchHistory.innerHTML = '<p style="text-align: center; color: #aaa;">Nenhuma partida jogada</p>';
+                matchHistory.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Nenhuma partida jogada ainda</p>';
                 return;
             }
             matches.reverse().forEach(match => {
@@ -708,7 +886,7 @@
                 matchItem.className = 'match-item';
                 matchItem.innerHTML = `
                     <div>
-                        <strong>vs ${opponent}</strong>
+                        <strong style="font-size: 1rem;">vs ${opponent}</strong>
                         <div class="stats">${new Date(match.date).toLocaleDateString('pt-BR')}</div>
                     </div>
                     <div class="result ${result}">${resultText}</div>
@@ -719,12 +897,7 @@
 
         function createRoom() {
             const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-            currentRoom = {
-                code: code,
-                host: currentUser.username,
-                players: [currentUser.username],
-                createdAt: Date.now()
-            };
+            currentRoom = { code, host: currentUser.username, players: [currentUser.username], createdAt: Date.now() };
             const activeRooms = JSON.parse(localStorage.getItem('activeRooms') || '[]');
             activeRooms.push(currentRoom);
             localStorage.setItem('activeRooms', JSON.stringify(activeRooms));
@@ -735,26 +908,14 @@
             playerColor = 'w';
         }
 
-        function joinRoom() {
-            const code = document.getElementById('roomCodeInput').value.toUpperCase();
-            joinRoomByCode(code);
-        }
-
         function joinRoomByCode(code) {
             const activeRooms = JSON.parse(localStorage.getItem('activeRooms') || '[]');
             const room = activeRooms.find(r => r.code === code);
-            if (!room) {
-                showNotification('Sala não encontrada');
-                return;
-            }
-            if (room.players.length >= 2) {
-                showNotification('Sala cheia');
-                return;
-            }
+            if (!room) { showNotification('Sala não encontrada'); return; }
+            if (room.players.length >= 2) { showNotification('Sala cheia'); return; }
             currentRoom = room;
             currentRoom.players.push(currentUser.username);
-            const updatedRooms = activeRooms.map(r => r.code === code ? currentRoom : r);
-            localStorage.setItem('activeRooms', JSON.stringify(updatedRooms));
+            localStorage.setItem('activeRooms', JSON.stringify(activeRooms.map(r => r.code === code ? currentRoom : r)));
             channel = new BroadcastChannel(`chess_${code}`);
             channel.onmessage = handleRoomMessage;
             playerColor = 'b';
@@ -764,25 +925,17 @@
 
         function cancelRoom() {
             const activeRooms = JSON.parse(localStorage.getItem('activeRooms') || '[]');
-            const updatedRooms = activeRooms.filter(r => r.code !== currentRoom.code);
-            localStorage.setItem('activeRooms', JSON.stringify(updatedRooms));
-            if (channel) {
-                channel.close();
-                channel = null;
-            }
+            localStorage.setItem('activeRooms', JSON.stringify(activeRooms.filter(r => r.code !== currentRoom.code)));
+            if (channel) { channel.close(); channel = null; }
             currentRoom = null;
             showScreen('lobbyScreen');
         }
 
         function handleRoomMessage(event) {
             const data = event.data;
-            if (data.type === 'player_joined') {
-                startGame();
-            } else if (data.type === 'move') {
-                executeMove(data.from, data.to, false);
-            } else if (data.type === 'resign') {
-                endGame(currentUser.username);
-            }
+            if (data.type === 'player_joined') startGame();
+            else if (data.type === 'move') executeMove(data.from, data.to, false);
+            else if (data.type === 'resign') endGame(currentUser.username, 'resign');
         }
 
         function startGame() {
@@ -802,7 +955,7 @@
             showScreen('gameScreen');
             document.getElementById('gamePlayer1Name').textContent = currentUser.username;
             document.getElementById('gamePlayer1').textContent = currentUser.username[0].toUpperCase();
-            document.getElementById('gamePlayer2Name').textContent = 'IA';
+            document.getElementById('gamePlayer2Name').textContent = 'IA Adaptativa';
             document.getElementById('gamePlayer2').textContent = '🤖';
             initBoard();
             gameActive = true;
@@ -819,45 +972,36 @@
                 ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
                 ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr']
             ];
-            board = initialSetup.map(row =>
-                row.map(cell => {
-                    if (!cell) return null;
-                    return { color: cell[0], type: cell[1] };
-                })
-            );
-            currentPlayer = 'w';
-            selectedSquare = null;
-            validMoves = [];
-            lastMove = null;
-            moveHistory = [];
-            updateGameStatus();
-            renderBoard();
+            board = initialSetup.map(row => row.map(cell => cell ? { color: cell[0], type: cell[1] } : null));
+            currentPlayer = 'w'; selectedSquare = null; validMoves = []; lastMove = null; moveHistory = [];
+            updateGameStatus(); renderBoard();
         }
 
         function renderBoard() {
             const boardElement = document.getElementById('board');
             boardElement.innerHTML = '';
+            const kingInCheck = isInCheck(currentPlayer);
+
             for (let row = 0; row < 8; row++) {
                 for (let col = 0; col < 8; col++) {
                     const square = document.createElement('div');
-                    const isLight = (row + col) % 2 === 0;
-                    square.className = `square ${isLight ? 'light' : 'dark'}`;
-                    if (lastMove && ((lastMove.from.row === row && lastMove.from.col === col) ||
-                        (lastMove.to.row === row && lastMove.to.col === col))) {
+                    square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+
+                    if (lastMove && ((lastMove.from.row === row && lastMove.from.col === col) || (lastMove.to.row === row && lastMove.to.col === col))) {
                         square.classList.add('last-move');
                     }
                     if (selectedSquare && selectedSquare.row === row && selectedSquare.col === col) {
                         square.classList.add('selected');
                     }
-                    const isValid = validMoves.some(m => m.row === row && m.col === col);
-                    if (isValid) {
-                        if (board[row][col] !== null) {
-                            square.classList.add('valid-capture');
-                        } else {
-                            square.classList.add('valid-move');
-                        }
-                    }
+
                     const piece = board[row][col];
+                    if (piece && piece.type === 'k' && piece.color === currentPlayer && kingInCheck) {
+                        square.classList.add('in-check');
+                    }
+
+                    const isValid = validMoves.some(m => m.row === row && m.col === col);
+                    if (isValid) square.classList.add(piece !== null ? 'valid-capture' : 'valid-move');
+
                     if (piece) {
                         const pieceSpan = document.createElement('span');
                         pieceSpan.className = `piece ${piece.color === 'w' ? 'white' : 'black'}`;
@@ -872,70 +1016,82 @@
 
         function updateGameStatus() {
             const status = document.getElementById('gameStatus');
+            const inCheck = isInCheck(currentPlayer);
+
+            if (inCheck) {
+                status.textContent = 'XEQUE!';
+                status.className = 'status check';
+                return;
+            }
+
             if (isAiGame) {
                 status.textContent = currentPlayer === 'w' ? 'Sua Vez' : 'IA Pensando...';
-                status.style.background = currentPlayer === 'w' ? '#4caf50' : '#f44336';
+                status.className = `status ${currentPlayer === 'w' ? 'your-turn' : 'thinking'}`;
             } else {
                 const isMyTurn = currentPlayer === playerColor;
                 status.textContent = isMyTurn ? 'Sua Vez' : 'Vez do Oponente';
-                status.style.background = isMyTurn ? '#4caf50' : '#f44336';
+                status.className = `status ${isMyTurn ? 'your-turn' : ''}`;
             }
         }
 
-        function handleSquareClick(row, col) {
-            if (!gameActive) return;
-            if (isAiGame && currentPlayer === 'b') return;
-            if (!isAiGame && currentPlayer !== playerColor) return;
-            const clickedPiece = board[row][col];
-            const isSameColor = clickedPiece && clickedPiece.color === currentPlayer;
-            const move = validMoves.find(m => m.row === row && m.col === col);
-            if (selectedSquare && move) {
-                executeMove(selectedSquare, { row, col }, !isAiGame);
-                return;
+        function findKing(color) {
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (board[r][c] && board[r][c].color === color && board[r][c].type === 'k') {
+                        return { row: r, col: c };
+                    }
+                }
             }
-            if (isSameColor) {
-                selectedSquare = { row, col };
-                validMoves = calculateValidMoves(row, col, clickedPiece);
-                renderBoard();
-                return;
-            }
-            selectedSquare = null;
-            validMoves = [];
-            renderBoard();
+            return null;
         }
 
-        function executeMove(from, to, broadcast = true) {
-            const piece = board[from.row][from.col];
-            const target = board[to.row][to.col];
-            if (target && target.type === 'k') {
-                const winner = isAiGame ? currentUser.username : (currentPlayer === 'w' ? currentRoom.host : currentRoom.players[1]);
-                endGame(winner);
-                return;
+        function isSquareAttacked(row, col, byColor) {
+            const directions = {
+                'n': [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]],
+                'k': [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]]
+            };
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (!piece || piece.color !== byColor) continue;
+
+                    if (piece.type === 'p') {
+                        const dir = piece.color === 'w' ? -1 : 1;
+                        if (r + dir === row && (c - 1 === col || c + 1 === col)) return true;
+                    } else if (piece.type === 'n' || piece.type === 'k') {
+                        for (const [dr, dc] of directions[piece.type]) {
+                            if (r + dr === row && c + dc === col) return true;
+                        }
+                    } else {
+                        const dirs = piece.type === 'r' ? [[0, 1], [0, -1], [1, 0], [-1, 0]] :
+                            piece.type === 'b' ? [[1, 1], [1, -1], [-1, 1], [-1, -1]] :
+                                [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+
+                        for (const [dr, dc] of dirs) {
+                            let nr = r + dr, nc = c + dc;
+                            while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
+                                if (nr === row && nc === col) return true;
+                                if (board[nr][nc] !== null) break;
+                                nr += dr; nc += dc;
+                            }
+                        }
+                    }
+                }
             }
-            board[to.row][to.col] = piece;
-            board[from.row][from.col] = null;
-            if (piece.type === 'p' && (to.row === 0 || to.row === 7)) {
-                piece.type = 'q';
-            }
-            moveHistory.push({ from, to, piece: piece.type });
-            lastMove = { from, to };
-            currentPlayer = currentPlayer === 'w' ? 'b' : 'w';
-            selectedSquare = null;
-            validMoves = [];
-            updateGameStatus();
-            renderBoard();
-            if (isAiGame && currentPlayer === 'b' && gameActive) {
-                setTimeout(makeAiMove, 500);
-            } else if (broadcast && channel) {
-                channel.postMessage({ type: 'move', from: from, to: to });
-            }
+            return false;
         }
 
-        function calculateValidMoves(row, col, piece) {
+        function isInCheck(color) {
+            const kingPos = findKing(color);
+            if (!kingPos) return false;
+            return isSquareAttacked(kingPos.row, kingPos.col, color === 'w' ? 'b' : 'w');
+        }
+
+        function getPseudoLegalMoves(row, col, piece) {
             const moves = [];
             const directions = {
-                'r': [[0, 1], [0, -1], [1, 0], [-1, 0]],
-                'b': [[1, 1], [1, -1], [-1, 1], [-1, -1]],
+                'r': [[0, 1], [0, -1], [1, 0], [-1, 0]], 'b': [[1, 1], [1, -1], [-1, 1], [-1, -1]],
                 'q': [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]],
                 'n': [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]],
                 'k': [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]]
@@ -943,92 +1099,176 @@
             const isEnemy = (r, c) => board[r][c] && board[r][c].color !== piece.color;
             const isEmpty = (r, c) => board[r][c] === null;
             const inBounds = (r, c) => r >= 0 && r < 8 && c >= 0 && c < 8;
+
             if (piece.type === 'p') {
                 const dir = piece.color === 'w' ? -1 : 1;
                 const startRow = piece.color === 'w' ? 6 : 1;
                 if (inBounds(row + dir, col) && isEmpty(row + dir, col)) {
-                    moves.push({ row: row + dir, col: col });
-                    if (row === startRow && isEmpty(row + dir * 2, col)) {
-                        moves.push({ row: row + dir * 2, col: col });
-                    }
+                    moves.push({ row: row + dir, col });
+                    if (row === startRow && isEmpty(row + dir * 2, col)) moves.push({ row: row + dir * 2, col });
                 }
                 [[dir, 1], [dir, -1]].forEach(([dr, dc]) => {
-                    if (inBounds(row + dr, col + dc) && isEnemy(row + dr, col + dc)) {
-                        moves.push({ row: row + dr, col: col + dc });
-                    }
+                    if (inBounds(row + dr, col + dc) && isEnemy(row + dr, col + dc)) moves.push({ row: row + dr, col: col + dc });
                 });
             } else if (piece.type === 'n' || piece.type === 'k') {
                 directions[piece.type].forEach(([dr, dc]) => {
                     const nr = row + dr, nc = col + dc;
-                    if (inBounds(nr, nc) && (isEmpty(nr, nc) || isEnemy(nr, nc))) {
-                        moves.push({ row: nr, col: nc });
-                    }
+                    if (inBounds(nr, nc) && (isEmpty(nr, nc) || isEnemy(nr, nc))) moves.push({ row: nr, col: nc });
                 });
             } else {
                 directions[piece.type].forEach(([dr, dc]) => {
                     let nr = row + dr, nc = col + dc;
                     while (inBounds(nr, nc)) {
-                        if (isEmpty(nr, nc)) {
-                            moves.push({ row: nr, col: nc });
-                        } else {
-                            if (isEnemy(nr, nc)) moves.push({ row: nr, col: nc });
-                            break;
-                        }
-                        nr += dr;
-                        nc += dc;
+                        if (isEmpty(nr, nc)) moves.push({ row: nr, col: nc });
+                        else { if (isEnemy(nr, nc)) moves.push({ row: nr, col: nc }); break; }
+                        nr += dr; nc += dc;
                     }
                 });
             }
             return moves;
         }
 
-        function getAllPossibleMoves(color) {
-            const allMoves = [];
+        function getLegalMoves(color) {
+            const legalMoves = [];
             for (let row = 0; row < 8; row++) {
                 for (let col = 0; col < 8; col++) {
                     const piece = board[row][col];
                     if (piece && piece.color === color) {
-                        const moves = calculateValidMoves(row, col, piece);
-                        moves.forEach(move => {
-                            allMoves.push({ from: { row, col }, to: move, piece });
-                        });
+                        const pseudoMoves = getPseudoLegalMoves(row, col, piece);
+                        for (const move of pseudoMoves) {
+                            const captured = board[move.row][move.col];
+                            board[move.row][move.col] = piece;
+                            board[row][col] = null;
+
+                            if (!isInCheck(color)) {
+                                legalMoves.push({ from: { row, col }, to: move, piece, captured });
+                            }
+
+                            board[row][col] = piece;
+                            board[move.row][move.col] = captured;
+                        }
                     }
                 }
             }
-            return allMoves;
+            return legalMoves.sort((a, b) => {
+                const valA = a.captured ? { 'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 100 }[a.captured.type] : 0;
+                const valB = b.captured ? { 'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 100 }[b.captured.type] : 0;
+                return valB - valA;
+            });
+        }
+
+        function handleSquareClick(row, col) {
+            if (!gameActive || (isAiGame && currentPlayer === 'b') || (!isAiGame && currentPlayer !== playerColor)) return;
+
+            const clickedPiece = board[row][col];
+            const isSameColor = clickedPiece && clickedPiece.color === currentPlayer;
+            const move = validMoves.find(m => m.row === row && m.col === col);
+
+            if (selectedSquare && move) {
+                executeMove(selectedSquare, { row, col }, !isAiGame);
+                return;
+            }
+            if (isSameColor) {
+                selectedSquare = { row, col };
+                validMoves = getLegalMoves(currentPlayer).filter(m => m.from.row === row && m.from.col === col).map(m => m.to);
+                renderBoard();
+                return;
+            }
+            selectedSquare = null; validMoves = []; renderBoard();
+        }
+
+        function executeMove(from, to, broadcast = true) {
+            const piece = board[from.row][from.col];
+            const target = board[to.row][to.col];
+
+            board[to.row][to.col] = piece;
+            board[from.row][from.col] = null;
+
+            if (piece.type === 'p' && (to.row === 0 || to.row === 7)) piece.type = 'q';
+
+            moveHistory.push({ from, to, piece: piece.type, captured: target });
+            lastMove = { from, to };
+            currentPlayer = currentPlayer === 'w' ? 'b' : 'w';
+            selectedSquare = null;
+
+            const opponentMoves = getLegalMoves(currentPlayer);
+            const inCheck = isInCheck(currentPlayer);
+
+            if (opponentMoves.length === 0) {
+                gameActive = false;
+                if (inCheck) {
+                    const winner = currentPlayer === 'w' ? (isAiGame ? currentUser.username : currentRoom.players[1]) : (isAiGame ? 'IA' : currentRoom.host);
+                    endGame(winner, 'checkmate');
+                } else {
+                    endGame(null, 'stalemate');
+                }
+                return;
+            }
+
+            validMoves = [];
+            updateGameStatus();
+            renderBoard();
+
+            if (isAiGame && currentPlayer === 'b' && gameActive) {
+                setTimeout(makeAiMove, 400);
+            } else if (broadcast && channel) {
+                channel.postMessage({ type: 'move', from, to });
+            }
         }
 
         function evaluateBoard() {
             let score = 0;
-            const pieceValues = { p: 10, n: 30, b: 30, r: 50, q: 90, k: 900 };
+            let mobilityWhite = 0, mobilityBlack = 0;
+            const values = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+
             for (let row = 0; row < 8; row++) {
                 for (let col = 0; col < 8; col++) {
                     const piece = board[row][col];
                     if (piece) {
-                        const value = pieceValues[piece.type];
-                        if (piece.color === 'b') score += value;
-                        else score -= value;
+                        let val = values[piece.type];
+                        const pstRow = piece.color === 'w' ? row : 7 - row;
+                        val += PST[piece.type][pstRow][col] * 0.1;
+
+                        if (piece.type === 'k') val *= aiMeta.kingSafety;
+                        if ((piece.type === 'p' || piece.type === 'n') && col >= 2 && col <= 5 && row >= 2 && row <= 5) {
+                            val *= aiMeta.centerControl;
+                        }
+
+                        score += piece.color === 'b' ? val : -val;
                     }
                 }
             }
+
+            const whiteMoves = getLegalMoves('w').length;
+            const blackMoves = getLegalMoves('b').length;
+            score += (blackMoves - whiteMoves) * 5;
+
             return score;
         }
 
         function minimax(depth, alpha, beta, isMaximizing) {
             if (depth === 0) return evaluateBoard();
+
             const color = isMaximizing ? 'b' : 'w';
-            const allMoves = getAllPossibleMoves(color);
-            if (allMoves.length === 0) return isMaximizing ? -10000 : 10000;
+            const allMoves = getLegalMoves(color);
+
+            if (allMoves.length === 0) {
+                return isInCheck(color) ? (isMaximizing ? -99999 : 99999) : 0;
+            }
+
             if (isMaximizing) {
                 let maxScore = -Infinity;
                 for (const move of allMoves) {
-                    const capturedPiece = board[move.to.row][move.to.col];
-                    const originalPiece = board[move.from.row][move.from.col];
-                    board[move.to.row][move.to.col] = originalPiece;
+                    const captured = board[move.to.row][move.to.col];
+                    const original = board[move.from.row][move.from.col];
+                    board[move.to.row][move.to.col] = original;
                     board[move.from.row][move.from.col] = null;
+
                     const score = minimax(depth - 1, alpha, beta, false);
-                    board[move.from.row][move.from.col] = originalPiece;
-                    board[move.to.row][move.to.col] = capturedPiece;
+
+                    board[move.from.row][move.from.col] = original;
+                    board[move.to.row][move.to.col] = captured;
+
                     maxScore = Math.max(maxScore, score);
                     alpha = Math.max(alpha, score);
                     if (beta <= alpha) break;
@@ -1037,13 +1277,16 @@
             } else {
                 let minScore = Infinity;
                 for (const move of allMoves) {
-                    const capturedPiece = board[move.to.row][move.to.col];
-                    const originalPiece = board[move.from.row][move.from.col];
-                    board[move.to.row][move.to.col] = originalPiece;
+                    const captured = board[move.to.row][move.to.col];
+                    const original = board[move.from.row][move.from.col];
+                    board[move.to.row][move.to.col] = original;
                     board[move.from.row][move.from.col] = null;
+
                     const score = minimax(depth - 1, alpha, beta, true);
-                    board[move.from.row][move.from.col] = originalPiece;
-                    board[move.to.row][move.to.col] = capturedPiece;
+
+                    board[move.from.row][move.from.col] = original;
+                    board[move.to.row][move.to.col] = captured;
+
                     minScore = Math.min(minScore, score);
                     beta = Math.min(beta, score);
                     if (beta <= alpha) break;
@@ -1055,33 +1298,40 @@
         function makeAiMove() {
             if (!gameActive || currentPlayer !== 'b') return;
             const level = parseInt(document.getElementById('aiDifficultySlider').value);
-            const depth = level <= 2 ? 1 : level <= 6 ? 2 : 3;
-            const allMoves = getAllPossibleMoves('b');
-            if (allMoves.length === 0) {
-                endGame(currentUser.username);
-                return;
-            }
+            const depth = level <= 3 ? 2 : level <= 7 ? 3 : 4;
+            const allMoves = getLegalMoves('b');
+
+            if (allMoves.length === 0) return;
+
             let bestMove;
-            if (level === 1) {
+            if (level <= 2) {
                 bestMove = allMoves[Math.floor(Math.random() * allMoves.length)];
             } else {
                 let bestScore = -Infinity;
-                let alpha = -Infinity;
-                let beta = Infinity;
+                let alpha = -Infinity, beta = Infinity;
+                const topMoves = [];
+
                 for (const move of allMoves) {
-                    const capturedPiece = board[move.to.row][move.to.col];
-                    const originalPiece = board[move.from.row][move.from.col];
-                    board[move.to.row][move.to.col] = originalPiece;
+                    const captured = board[move.to.row][move.to.col];
+                    const original = board[move.from.row][move.from.col];
+                    board[move.to.row][move.to.col] = original;
                     board[move.from.row][move.from.col] = null;
+
                     const score = minimax(depth - 1, alpha, beta, false);
-                    board[move.from.row][move.from.col] = originalPiece;
-                    board[move.to.row][move.to.col] = capturedPiece;
+
+                    board[move.from.row][move.from.col] = original;
+                    board[move.to.row][move.to.col] = captured;
+
                     if (score > bestScore) {
                         bestScore = score;
-                        bestMove = move;
+                        topMoves.length = 0;
+                        topMoves.push(move);
+                    } else if (score === bestScore) {
+                        topMoves.push(move);
                     }
                     alpha = Math.max(alpha, bestScore);
                 }
+                bestMove = topMoves[Math.floor(Math.random() * topMoves.length)];
             }
             executeMove(bestMove.from, bestMove.to, false);
         }
@@ -1089,54 +1339,67 @@
         function resignGame() {
             if (!gameActive) return;
             const winner = isAiGame ? 'IA' : (playerColor === 'w' ? currentRoom.players[1] : currentRoom.host);
-            if (!isAiGame && channel) {
-                channel.postMessage({ type: 'resign' });
-            }
-            endGame(winner);
+            if (!isAiGame && channel) channel.postMessage({ type: 'resign' });
+            endGame(winner, 'resign');
         }
 
-        async function endGame(winner) {
+        async function endGame(winner, reason) {
             gameActive = false;
             const modal = document.getElementById('resultModal');
             const title = document.getElementById('resultTitle');
             const text = document.getElementById('resultText');
-            if (isAiGame) {
-                const isCurrentUserWinner = winner === currentUser.username;
-                title.textContent = isCurrentUserWinner ? 'Vitória!' : 'Derrota';
-                text.textContent = isCurrentUserWinner ? 'Você venceu a IA!' : 'A IA venceu a partida!';
-                await db.updateUserStats(currentUser.username, isCurrentUserWinner ? 'win' : 'loss');
-                await db.addMatch(currentUser.username, 'IA', winner, moveHistory);
+
+            if (reason === 'stalemate') {
+                title.textContent = 'Empate!';
+                text.textContent = 'Afogamento (Stalemate). Nenhuma jogada legal disponível.';
+                if (isAiGame) {
+                    await db.updateUserStats(currentUser.username, 'draw');
+                    await db.addMatch(currentUser.username, 'IA', 'draw', moveHistory);
+                } else {
+                    await db.updateUserStats(currentUser.username, 'draw');
+                    const opponent = currentRoom.players.find(p => p !== currentUser.username);
+                    await db.updateUserStats(opponent, 'draw');
+                    await db.addMatch(currentRoom.host, currentRoom.players[1], 'draw', moveHistory);
+                }
             } else {
-                const isCurrentUserWinner = winner === currentUser.username;
-                title.textContent = isCurrentUserWinner ? 'Vitória!' : 'Derrota';
-                text.textContent = `${winner} venceu a partida`;
-                await db.updateUserStats(currentUser.username, isCurrentUserWinner ? 'win' : 'loss');
-                const opponent = currentRoom.players.find(p => p !== currentUser.username);
-                await db.updateUserStats(opponent, isCurrentUserWinner ? 'loss' : 'win');
-                await db.addMatch(currentRoom.host, currentRoom.players[1], winner, moveHistory);
-                const activeRooms = JSON.parse(localStorage.getItem('activeRooms') || '[]');
-                const updatedRooms = activeRooms.filter(r => r.code !== currentRoom.code);
-                localStorage.setItem('activeRooms', JSON.stringify(updatedRooms));
+                if (isAiGame) {
+                    const isWin = winner === currentUser.username;
+                    title.textContent = isWin ? 'Vitória!' : 'Derrota';
+                    text.textContent = isWin ? `Você venceu por ${reason === 'checkmate' ? 'Xeque-mate' : 'Desistência'}!` : `A IA venceu por ${reason === 'checkmate' ? 'Xeque-mate' : 'Desistência'}.`;
+                    await db.updateUserStats(currentUser.username, isWin ? 'win' : 'loss');
+                    await db.addMatch(currentUser.username, 'IA', winner, moveHistory);
+
+                    if (!isWin) {
+                        aiMeta.kingSafety = Math.min(2.0, aiMeta.kingSafety + 0.15);
+                        aiMeta.centerControl = Math.min(1.5, aiMeta.centerControl + 0.1);
+                        localStorage.setItem('aiMeta', JSON.stringify(aiMeta));
+                    }
+                } else {
+                    const isWin = winner === currentUser.username;
+                    title.textContent = isWin ? 'Vitória!' : 'Derrota';
+                    text.textContent = `${winner} venceu por ${reason === 'checkmate' ? 'Xeque-mate' : 'Desistência'}.`;
+                    await db.updateUserStats(currentUser.username, isWin ? 'win' : 'loss');
+                    const opponent = currentRoom.players.find(p => p !== currentUser.username);
+                    await db.updateUserStats(opponent, isWin ? 'loss' : 'win');
+                    await db.addMatch(currentRoom.host, currentRoom.players[1], winner, moveHistory);
+
+                    const activeRooms = JSON.parse(localStorage.getItem('activeRooms') || '[]');
+                    localStorage.setItem('activeRooms', JSON.stringify(activeRooms.filter(r => r.code !== currentRoom.code)));
+                }
             }
             modal.classList.add('active');
         }
 
         async function backToLobby() {
             document.getElementById('resultModal').classList.remove('active');
-            if (channel) {
-                channel.close();
-                channel = null;
-            }
-            currentRoom = null;
-            isAiGame = false;
+            if (channel) { channel.close(); channel = null; }
+            currentRoom = null; isAiGame = false;
             showScreen('lobbyScreen');
             await loadLobby();
         }
 
         function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
@@ -1146,7 +1409,9 @@
             notification.textContent = message;
             document.body.appendChild(notification);
             setTimeout(() => {
-                notification.remove();
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(120%)';
+                setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
 
